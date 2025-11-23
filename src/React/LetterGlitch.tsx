@@ -21,6 +21,7 @@ const LetterGlitch = ({
       color: string;
       targetColor: string;
       colorProgress: number;
+      isSkillWord: boolean;
     }[]
   >([]);
   const grid = useRef({ columns: 0, rows: 0 });
@@ -30,6 +31,22 @@ const LetterGlitch = ({
   const fontSize = 16;
   const charWidth = 10;
   const charHeight = 20;
+
+  // Palabras de habilidades que se mostrarán
+  const skillWords = [
+    "DISEÑO",
+    "CODIGO",
+    "DIRECCION DE ARTE",
+    "PUBLICIDAD",
+    "ANIMACION",
+    "UI/UX",
+    "FRONTEND",
+    "BACKEND",
+    "CREATIVIDAD",
+    "DESARROLLO",
+    "BRANDING",
+    "WEB DESIGN",
+  ];
 
   const lettersAndSymbols = [
     "A",
@@ -140,12 +157,84 @@ const LetterGlitch = ({
   const initializeLetters = (columns: number, rows: number) => {
     grid.current = { columns, rows };
     const totalLetters = columns * rows;
-    letters.current = Array.from({ length: totalLetters }, () => ({
-      char: getRandomChar(),
-      color: getRandomColor(),
-      targetColor: getRandomColor(),
-      colorProgress: 1,
-    }));
+    const newLetters: {
+      char: string;
+      color: string;
+      targetColor: string;
+      colorProgress: number;
+      isSkillWord: boolean;
+    }[] = [];
+
+    // Llenar el array con espacios primero (más limpio y legible)
+    for (let i = 0; i < totalLetters; i++) {
+      newLetters.push({
+        char: " ",
+        color: getRandomColor(),
+        targetColor: getRandomColor(),
+        colorProgress: 1,
+        isSkillWord: false,
+      });
+    }
+
+    // Insertar palabras de habilidades en posiciones completamente aleatorias
+    const wordsToPlace = Math.floor(rows * 0.5); // Más palabras (50% de las filas)
+    const placedRanges: { start: number; end: number }[] = [];
+
+    for (let i = 0; i < wordsToPlace; i++) {
+      const word = skillWords[Math.floor(Math.random() * skillWords.length)];
+      const wordLength = word.length;
+      
+      // Intentar encontrar una posición válida en toda el área
+      let attempts = 0;
+      let placed = false;
+      
+      while (!placed && attempts < 100) {
+        // Posición completamente aleatoria
+        const row = Math.floor(Math.random() * rows);
+        const col = Math.floor(Math.random() * Math.max(1, columns - wordLength - 2));
+        const startIndex = row * columns + col;
+        
+        // Verificar si hay espacio para la palabra (con margen)
+        let canPlace = true;
+        for (const range of placedRanges) {
+          if (
+            (startIndex >= range.start - 3 && startIndex <= range.end + 3) ||
+            (startIndex + wordLength >= range.start - 3 && startIndex + wordLength <= range.end + 3)
+          ) {
+            canPlace = false;
+            break;
+          }
+        }
+        
+        if (canPlace && startIndex + wordLength <= totalLetters) {
+          // Colocar la palabra con un color más consistente
+          const wordColor = getRandomColor();
+          for (let j = 0; j < wordLength; j++) {
+            const index = startIndex + j;
+            newLetters[index] = {
+              char: word[j],
+              color: wordColor,
+              targetColor: wordColor,
+              colorProgress: 1,
+              isSkillWord: true,
+            };
+          }
+          placedRanges.push({ start: startIndex, end: startIndex + wordLength });
+          placed = true;
+        }
+        
+        attempts++;
+      }
+    }
+
+    // Llenar espacios vacíos con algunos caracteres aleatorios (pero menos denso)
+    for (let i = 0; i < totalLetters; i++) {
+      if (!newLetters[i].isSkillWord && Math.random() > 0.7) {
+        newLetters[i].char = getRandomChar();
+      }
+    }
+
+    letters.current = newLetters;
   };
 
   const resizeCanvas = () => {
@@ -191,13 +280,18 @@ const LetterGlitch = ({
   const updateLetters = () => {
     if (!letters.current || letters.current.length === 0) return; // Prevent accessing empty array
 
-    const updateCount = Math.max(1, Math.floor(letters.current.length * 0.05));
+    const updateCount = Math.max(1, Math.floor(letters.current.length * 0.03)); // Reducir frecuencia de actualización
 
     for (let i = 0; i < updateCount; i++) {
       const index = Math.floor(Math.random() * letters.current.length);
       if (!letters.current[index]) continue; // Skip if index is invalid
 
-      letters.current[index].char = getRandomChar();
+      // Solo actualizar letras que NO son parte de las palabras de habilidades
+      if (!letters.current[index].isSkillWord) {
+        // Cambiar entre carácter aleatorio y espacio para menos ruido
+        letters.current[index].char = Math.random() > 0.5 ? getRandomChar() : " ";
+      }
+      
       letters.current[index].targetColor = getRandomColor();
 
       if (!smooth) {

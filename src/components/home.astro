@@ -7,21 +7,24 @@ import SkillsList from "../React/SkillsList.tsx";
 <section class="text-[var(--white)] mt-12 md:mt-0" id="home">
   <div class="max-w-5xl mx-auto space-y-8 md:py-36 pb-14">
     <div class="text-left space-y-4">
+      <!-- Header cabezera principal /> -->
       <p class="text-md md:text-lg text-[var(--white-icon)] shiny-white">
-        Hola, Soy Alain
+        Hola, Soy Alain Ossandon
       </p>
       <div class="flex flex-col lg:flex-row lg:items-center space-y-4 lg:space-y-0 lg:space-x-8 md:gap-4">
         <h1 class="text-[var(--white)] text-5xl md:text-6xl font-medium text-pretty leading-none">Product <br /> Designer</h1>
 
         <div>
           <p class="text-md md:text-2xl text-[var(--white-icon)]">
-            UX/UI Designer | Front-End Developer (en formación)
+            UX/UI Designer | Front-End Developer
             <span class="text-[var(--sec)] shiny-sec"> Diseñador Gráfico con 10 años de experiencia.</span>
           </p>
           <p class="text-md md:text-2xl text-[var(--white-icon)] pt-2">Impulsado por la curiosidad y el desarrollo de productos.</p>
         </div>
 
       </div>
+
+      <!-- Link para redes /> -->
       <div class="flex justify-start gap-2 pt-3 md:pt-6">
         <a
           target="_blank"
@@ -80,12 +83,14 @@ import SkillsList from "../React/SkillsList.tsx";
 
     <LogoWall />
 
+    <!-- Aquí está la lista de habilidades principales /> -->
     <div class="flex flex-col lg:flex-row items-center gap-8">
       <SkillsList client:load />
       <div
         class="flex justify-center md:w-full md:h-[292px] size-[290px] pt-3 md:pt-9 md:ml-16"
       >
-        <LetterGlitch
+        <!-- aquí está el mural de letras /> -->      
+        <LetterGlitch 
           client:load
           glitchColors={["#A9FF5B", "#005003", "#A9FF5B"]}
           glitchSpeed={33}

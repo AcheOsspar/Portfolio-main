@@ -41,7 +41,7 @@ const LetterGlitch = ({
     "ANIMACION",
     "UI/UX",
     "FRONTEND",
-    "BACKEND",
+    "PRODUCT DESIGN",
     "CREATIVIDAD",
     "DESARROLLO",
     "BRANDING",
@@ -165,10 +165,10 @@ const LetterGlitch = ({
       isSkillWord: boolean;
     }[] = [];
 
-    // Llenar el array con espacios primero (más limpio y legible)
+    // Llenar el array con caracteres aleatorios (fondo completo)
     for (let i = 0; i < totalLetters; i++) {
       newLetters.push({
-        char: " ",
+        char: getRandomChar(),
         color: getRandomColor(),
         targetColor: getRandomColor(),
         colorProgress: 1,
@@ -176,8 +176,8 @@ const LetterGlitch = ({
       });
     }
 
-    // Insertar palabras de habilidades en posiciones completamente aleatorias
-    const wordsToPlace = Math.floor(rows * 0.5); // Más palabras (50% de las filas)
+    // Insertar MUCHAS más palabras de habilidades
+    const wordsToPlace = Math.floor(rows * 1.2); // 120% de las filas = muchas palabras
     const placedRanges: { start: number; end: number }[] = [];
 
     for (let i = 0; i < wordsToPlace; i++) {
@@ -194,12 +194,12 @@ const LetterGlitch = ({
         const col = Math.floor(Math.random() * Math.max(1, columns - wordLength - 2));
         const startIndex = row * columns + col;
         
-        // Verificar si hay espacio para la palabra (con margen)
+        // Verificar si hay espacio para la palabra (margen más pequeño)
         let canPlace = true;
         for (const range of placedRanges) {
           if (
-            (startIndex >= range.start - 3 && startIndex <= range.end + 3) ||
-            (startIndex + wordLength >= range.start - 3 && startIndex + wordLength <= range.end + 3)
+            (startIndex >= range.start - 1 && startIndex <= range.end + 1) ||
+            (startIndex + wordLength >= range.start - 1 && startIndex + wordLength <= range.end + 1)
           ) {
             canPlace = false;
             break;
@@ -207,7 +207,7 @@ const LetterGlitch = ({
         }
         
         if (canPlace && startIndex + wordLength <= totalLetters) {
-          // Colocar la palabra con un color más consistente
+          // Colocar la palabra con un color más brillante y consistente
           const wordColor = getRandomColor();
           for (let j = 0; j < wordLength; j++) {
             const index = startIndex + j;
@@ -224,13 +224,6 @@ const LetterGlitch = ({
         }
         
         attempts++;
-      }
-    }
-
-    // Llenar espacios vacíos con algunos caracteres aleatorios (pero menos denso)
-    for (let i = 0; i < totalLetters; i++) {
-      if (!newLetters[i].isSkillWord && Math.random() > 0.7) {
-        newLetters[i].char = getRandomChar();
       }
     }
 
